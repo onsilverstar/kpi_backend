@@ -18,10 +18,6 @@ import json
 # Create your views here.
 
 class CreateUserAPI(APIView):
-    # permission_classes = ("AllowAny",)
-    # queryset = apiserialize.User.objects.get_or_create()
-    # serializer_class = apiserialize.UserSeralizer
-
     def post(self, request):
         user = request.data
         serializer = apiserialize.UserSerializer(data=user)
@@ -47,3 +43,67 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response({'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+
+class Users(APIView):
+    def get(self, request):
+        queryset = models.User.objects.all()
+        serializer = apiserialize.UserSerializer(queryset, many=True, context={"request":request})
+        print(serializer)
+        return Response(serializer.data)
+    
+class KPIMeasure(APIView):
+    def get(self, request):
+        queryset = models.KPI_Measure.objects.all()
+        serializer = apiserialize.KPIMeasureSerializer(queryset, many=True, context={"request":request})
+        print(serializer)
+        return Response(serializer.data)
+
+class KPIMetric(APIView):
+    def get(self, request):
+        queryset = models.KPI_Metric.objects.all()
+        serializer = apiserialize.KPIMetricSerializer(queryset, many=True, context={"request":request})
+        print(serializer)
+        return Response(serializer.data)
+    
+class EditUser(APIView):
+    def post(self, request):
+        data = request.data
+        object_to_edit = models.User.objects.get(guid = data["guid"])
+        update_data = json.loads(data["update_data"])
+
+        for element_key in update_data.keys():
+            object_to_edit.element_key = update_data[element_key]
+        object_to_edit.save()
+        print(object_to_edit.values())
+        return Response({"status": data["status"]}, status=status.HTTP_200_OK)
+    
+class EDITKPI(APIView):
+    def post(self, request):
+        data = request.data
+        object_to_edit = models.KPI_Metric.objects.get(guid = data["guid"])
+        update_data = json.loads(data["update_data"])
+
+        for element_key in update_data.keys():
+            object_to_edit.element_key = update_data[element_key]
+        object_to_edit.save()
+        print(object_to_edit.values())
+        return Response({"status": data["status"]}, status=status.HTTP_200_OK)
+    
+class EDITKPIMeasure(APIView):
+    def post(self, request):
+        data = request.data
+        object_to_edit = models.KPI_Measure.objects.get(guid = data["guid"])
+        update_data = json.loads(data["update_data"])
+
+        for element_key in update_data.keys():
+            object_to_edit.element_key = update_data[element_key]
+        object_to_edit.save()
+        print(object_to_edit.values())
+        return Response({"status": data["status"]}, status=status.HTTP_200_OK)
+    
+class SearchKPIMeasureByKPI(APIView):
+     def post(self, request):
+        queryset = models.KPI_Measure.objects.filter(KPI = models.KPI_Metric.objects.get(guid = request.data.get("guid")))
+        serializer = apiserialize.ProductSerializer(queryset, many=True, context={"request":request})
+        return Response(serializer.data)
+    

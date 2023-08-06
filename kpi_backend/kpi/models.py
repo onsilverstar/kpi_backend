@@ -87,6 +87,8 @@ class KPI_Measure(models.Model):
     external_supervisor = models.ForeignKey(External, default=None, on_delete=models.CASCADE)
     director = models.ForeignKey(Director, default=None, on_delete=models.CASCADE)
     stage = models.CharField(max_length=40)
+    cycle_target_quantitative = models.DecimalField(decimal_places=2, max_digits=10, default=None)
+    ytd_quantitative = models.DecimalField(decimal_places=2, max_digits=10, default=None)
     BRAG_status = models.BooleanField(default=False)
     comments = models.CharField(max_length=400)
     reporting_lead_approve = models.BooleanField(default=False)
