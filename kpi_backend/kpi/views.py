@@ -263,8 +263,8 @@ class KPIMeasureUpdate(APIView):
 class CreateKPIMeasuretoDate(APIView):
     def get(self, request):
         all_kpi = models.KPI_Metric.objects.all()
-        guid = 1014
         for item in all_kpi:
+            guid = int(item.guid)
             start_date = datetime.now()
             end_date = start_date + timedelta(days=7)
             operating_period = 1
@@ -307,8 +307,9 @@ class AddUserToKPI(APIView):
     def post(self, request):
         data = request.data
         stage = data["stage"]
-        kpi = models.KPI_Metric.objects.get(pk = (data["kpi"]))
-        user = models.User.objects.get(pk = (data["user"]))
+        print(data["kpi"])
+        kpi = models.KPI_Metric.objects.get(pk = int(data["kpi"]))
+        user = models.User.objects.get(pk = int(data["user"]))
         title_object = getattr(models, stage).objects.create()
         title_object.user.set([user])
         title_object.save()
