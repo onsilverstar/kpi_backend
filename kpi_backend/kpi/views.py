@@ -120,6 +120,7 @@ class CreateDepAPI(APIView):
 class CreateKPIAPI(APIView):
     def post(self, request):
         kpi = request.data
+        #del kpi["department"]
         models.KPI_Metric.objects.create(**kpi)
         return Response(kpi, status= status.HTTP_201_CREATED)
     
